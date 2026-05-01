@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Massimiliano De Santis</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --paper:   #ffffff;
+  --paper2:  #fef3e0;
+  --paper3:  #fde8c4;
+  --ink:     #1c1812;
+  --ink2:    #5c5448;
+  --ink3:    #9c9080;
+  --leather: #7c5c3c;
+  --gold:    #b08040;
+  --line:    #e8e8e8;
+  --spine:   #d8d8d8;
+}
+html { scroll-behavior:smooth; }
+body { background:var(--paper); color:var(--ink); font-family:'Lora',Georgia,serif; font-weight:400; overflow-x:hidden; }
+body::before { content:''; position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; mix-blend-mode:multiply; }
+
+/* ── NAV ── */
+nav { position:fixed; top:0; left:0; right:0; z-index:600; display:flex; align-items:center; justify-content:space-between; padding:22px 72px; background:rgba(250,248,243,.93); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px); border-bottom:1px solid transparent; transition:border-color .4s, padding .4s; }
+nav.scrolled { border-bottom-color:var(--line); padding:14px 72px; }
+.nav-logo { font-family:'Cormorant Garamond',serif; font-size:19px; font-weight:500; text-decoration:none; color:var(--ink); }
+.nav-logo em { font-style:italic; color:var(--leather); }
+.nav-center { display:flex; gap:36px; list-style:none; }
+.nav-center a { font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:2.5px; text-transform:uppercase; color:var(--ink2); text-decoration:none; transition:color .3s; }
+.nav-center a:hover { color:var(--leather); }
+.lang-switch { display:flex; align-items:center; gap:4px; }
+.lang-btn { background:none; border:none; padding:6px 10px; cursor:pointer; color:var(--ink3); font-size:11px; letter-spacing:2px; font-family:'DM Sans',sans-serif; transition:color .3s; }
+.lang-btn.active { color:var(--ink); font-weight:500; border-bottom:1px solid var(--leather); }
+.lang-sep { color:var(--line); font-size:13px; }
+
+/* ── MAIN PAGE ── */
+#main-page { position:relative; z-index:1; }
+
+/* ════ HERO ════ */
+#hero { display:grid; grid-template-columns:1fr 1fr; align-items:stretch; padding-top:0; position:relative; overflow:hidden; }
+#hero::after { content:''; position:absolute; top:0; bottom:0; left:50%; width:2px; background:linear-gradient(to bottom,transparent,var(--spine) 20%,var(--spine) 80%,transparent); box-shadow:2px 0 12px rgba(0,0,0,.05),-2px 0 12px rgba(0,0,0,.03); pointer-events:none; }
+.book-left { background:var(--paper); display:flex; flex-direction:column; justify-content:center; padding:100px 72px 80px 10%; position:relative; }
+.book-left::before { content:''; position:absolute; bottom:0; left:0; width:44px; height:44px; background:linear-gradient(135deg,var(--paper3) 50%,var(--paper) 50%); box-shadow:2px -2px 6px rgba(0,0,0,.05); }
+.book-chapter { font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:4px; text-transform:uppercase; color:var(--leather); margin-bottom:24px; display:flex; align-items:center; gap:12px; opacity:0; animation:fadeUp .8s .1s both; }
+.book-chapter::before { content:''; width:32px; height:1px; background:var(--leather); }
+.book-name { font-family:'Cormorant Garamond',serif; font-weight:300; line-height:1.02; letter-spacing:-1.5px; margin-bottom:8px; opacity:0; animation:fadeUp 1s .25s both; }
+.book-name .first { font-size:clamp(48px,5.5vw,82px); display:block; }
+.book-name .last  { font-size:clamp(48px,5.5vw,82px); display:block; font-style:italic; color:var(--leather); }
+.book-rule { width:72px; height:1px; background:linear-gradient(to right,var(--leather),transparent); margin:28px 0; opacity:0; animation:fadeUp .8s .4s both; }
+.book-tagline { font-family:'Cormorant Garamond',serif; font-size:19px; font-style:italic; font-weight:300; color:var(--ink2); line-height:1.7; max-width:360px; opacity:0; animation:fadeUp .8s .5s both; }
+.book-btns { display:flex; gap:16px; flex-wrap:wrap; margin-top:44px; opacity:0; animation:fadeUp .8s .65s both; }
+.btn-ink { display:inline-flex; align-items:center; gap:10px; background:var(--ink); color:var(--paper); padding:13px 26px; font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:2.5px; text-transform:uppercase; text-decoration:none; border:none; cursor:pointer; transition:background .3s,gap .4s; }
+.btn-ink:hover { background:var(--leather); gap:18px; }
+.btn-outline { display:inline-flex; align-items:center; gap:10px; color:var(--ink); border:1px solid var(--ink); padding:13px 26px; font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:2.5px; text-transform:uppercase; text-decoration:none; cursor:pointer; transition:color .3s,border-color .3s,gap .4s; }
+.btn-outline:hover { color:var(--leather); border-color:var(--leather); gap:18px; }
+.book-right { background:var(--paper2); display:flex; align-items:center; justify-content:center; padding:100px 8% 80px 60px; opacity:0; animation:fadeRight 1s .3s cubic-bezier(.16,1,.3,1) both; }
+.photo-wrap { position:relative; width:100%; max-width:460px; }
+.photo-frame { border-radius:2px; overflow:hidden; box-shadow:24px 24px 60px rgba(28,24,18,.12),0 0 0 1px var(--line); position:relative; }
+.photo-frame::after { content:''; position:absolute; top:0; right:0; width:48px; height:48px; background:var(--leather); clip-path:polygon(100% 0,0 0,100% 100%); opacity:.6; }
+.photo-frame img { width:100%; display:block; object-fit:contain; background:var(--paper2); }
+.badge { position:absolute; bottom:-16px; left:-16px; background:var(--paper); border:1px solid var(--line); padding:14px 20px; box-shadow:0 12px 32px rgba(28,24,18,.08); animation:float 4s ease-in-out infinite; }
+.badge-n { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:300; color:var(--leather); line-height:1; }
+.badge-t { font-family:'DM Sans',sans-serif; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--ink3); margin-top:4px; }
+.page-num { position:absolute; bottom:28px; right:36px; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:13px; color:var(--ink3); }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+
+/* ── STRIP ── */
+.strip { border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:14px 0; overflow:hidden; background:var(--paper2); position:relative; z-index:1; }
+.strip-inner { display:flex; gap:56px; animation:mq 24s linear infinite; width:max-content; }
+.si { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:17px; color:var(--ink3); white-space:nowrap; }
+.sd { color:var(--leather); font-size:8px; align-self:center; }
+@keyframes mq { to{ transform:translateX(-50%); } }
+
+/* ════ CHAPTERS ════ */
+.chapter { padding:120px 0; border-top:1px solid var(--line); position:relative; z-index:1; }
+.chapter-inner { max-width:1060px; margin:0 auto; padding:0 10%; }
+.chapter-head { display:flex; align-items:center; gap:24px; margin-bottom:60px; }
+.chapter-numeral { font-family:'Cormorant Garamond',serif; font-size:80px; font-weight:300; font-style:italic; color:var(--paper3); line-height:1; flex-shrink:0; user-select:none; }
+.chapter-meta { flex:1; }
+.chapter-label { font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:4px; text-transform:uppercase; color:var(--leather); margin-bottom:10px; display:block; }
+.chapter-title { font-family:'Cormorant Garamond',serif; font-size:clamp(36px,4vw,56px); font-weight:300; line-height:1.12; letter-spacing:-.5px; }
+.chapter-title em { font-style:italic; color:var(--leather); }
+
+/* About */
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:72px; align-items:start; }
+.about-text p { font-size:16px; line-height:2; color:var(--ink2); margin-bottom:22px; }
+.about-text p:first-child::first-letter { font-family:'Cormorant Garamond',serif; font-size:64px; font-weight:400; float:left; line-height:.82; margin-right:10px; margin-top:6px; color:var(--leather); }
+.aside-pull { border-left:3px solid var(--leather); padding:18px 0 18px 28px; margin-bottom:40px; }
+.aside-pull blockquote { font-family:'Cormorant Garamond',serif; font-size:22px; font-style:italic; font-weight:300; line-height:1.6; color:var(--ink); }
+.aside-pull cite { display:block; margin-top:12px; font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--ink3); font-style:normal; }
+.stats-col { margin-top:40px; display:flex; flex-direction:column; gap:20px; }
+.stat-row { display:flex; align-items:baseline; gap:16px; padding-bottom:20px; border-bottom:1px solid var(--line); }
+.stat-n { font-family:'Cormorant Garamond',serif; font-size:44px; font-weight:300; color:var(--leather); line-height:1; min-width:80px; }
+.stat-l { font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--ink3); }
+
+/* Projects TOC */
+.toc-row { display:grid; grid-template-columns:56px 1fr 120px 48px; align-items:center; gap:24px; padding:28px 0; border-bottom:1px solid var(--line); text-decoration:none; color:inherit; cursor:pointer; position:relative; overflow:hidden; transition:padding-left .4s; }
+.toc-row:first-child { border-top:1px solid var(--line); }
+.toc-row::before { content:''; position:absolute; inset:0; background:var(--paper2); transform:scaleX(0); transform-origin:left; transition:transform .5s cubic-bezier(.16,1,.3,1); z-index:0; }
+.toc-row:hover { padding-left:20px; }
+.toc-row:hover::before { transform:scaleX(1); }
+.toc-row > * { position:relative; z-index:1; }
+.toc-num { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:14px; color:var(--ink3); }
+.toc-info h3 { font-family:'Cormorant Garamond',serif; font-size:clamp(20px,2.5vw,29px); font-weight:400; margin-bottom:4px; transition:color .3s; }
+.toc-row:hover .toc-info h3 { color:var(--leather); }
+.toc-info p { font-family:'DM Sans',sans-serif; font-size:12px; color:var(--ink3); }
+.toc-cat { font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--ink3); padding:5px 12px; border:1px solid var(--line); text-align:center; transition:border-color .3s,color .3s; }
+.toc-row:hover .toc-cat { border-color:var(--leather); color:var(--leather); }
+.toc-arr { font-size:20px; color:var(--ink3); text-align:right; transition:transform .4s cubic-bezier(.16,1,.3,1),color .3s; }
+.toc-row:hover .toc-arr { transform:translateX(6px); color:var(--leather); }
+
+/* Contact */
+.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; }
+.contact-desc { font-size:16px; line-height:2; color:var(--ink2); max-width:400px; margin-bottom:8px; }
+.ci-list { margin-top:36px; display:flex; flex-direction:column; gap:14px; }
+.ci-row { display:flex; gap:16px; align-items:flex-start; padding-bottom:14px; border-bottom:1px solid var(--line); }
+.ci-icon { width:40px; height:40px; border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+.ci-l { font-family:'DM Sans',sans-serif; font-size:9px; letter-spacing:2.5px; text-transform:uppercase; color:var(--ink3); margin-bottom:3px; }
+.ci-v { font-size:14px; color:var(--ink); }
+.ci-v a { color:var(--ink); text-decoration:none; transition:color .3s; }
+.ci-v a:hover { color:var(--leather); }
+.ci-email { word-break:break-all; font-size:13px; }
+.social-h { font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--ink3); margin-bottom:14px; }
+.soc-link { display:flex; align-items:center; gap:14px; padding:12px 16px; border:1px solid var(--line); text-decoration:none; color:var(--ink); margin-bottom:4px; transition:all .3s; font-size:14px; background:var(--paper); }
+.soc-link:hover { border-color:var(--leather); color:var(--leather); padding-left:24px; }
+.soc-link svg { width:17px; height:17px; flex-shrink:0; fill:currentColor; }
+.soc-name { font-family:'Lora',serif; font-size:15px; }
+.soc-handle { margin-left:auto; font-family:'DM Sans',sans-serif; font-size:11px; color:var(--ink3); transition:color .3s; }
+.soc-link:hover .soc-handle { color:var(--leather); }
+
+/* Footer */
+footer { background:var(--ink); color:rgba(250,248,243,.4); padding:48px 10%; position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+.footer-logo { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:300; color:rgba(250,248,243,.9); }
+.footer-logo em { font-style:italic; color:var(--gold); }
+footer p { font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:1px; }
+
+/* ════ DETAIL PAGES ════ */
+.detail-page { display:none; position:fixed; inset:0; z-index:700; background:var(--paper); overflow-y:auto; }
+.detail-page.active { display:block; animation:pageIn .5s cubic-bezier(.16,1,.3,1); }
+@keyframes pageIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+.detail-nav { position:sticky; top:0; background:rgba(250,248,243,.95); backdrop-filter:blur(12px); padding:18px 10%; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); z-index:10; }
+.back-btn { display:flex; align-items:center; gap:10px; font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:2.5px; text-transform:uppercase; color:var(--ink2); cursor:pointer; background:none; border:none; transition:color .3s,gap .3s; }
+.back-btn:hover { color:var(--leather); gap:4px; }
+.back-btn svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:1.5; }
+.detail-cat-tag { font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--ink3); }
+.detail-body { max-width:780px; margin:0 auto; padding:68px 40px 100px; }
+.detail-chapter-label { font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:4px; text-transform:uppercase; color:var(--leather); margin-bottom:18px; display:flex; align-items:center; gap:12px; }
+.detail-chapter-label::before { content:''; width:32px; height:1px; background:var(--leather); }
+.detail-h1 { font-family:'Cormorant Garamond',serif; font-size:clamp(40px,5vw,68px); font-weight:300; line-height:1.1; letter-spacing:-1px; margin-bottom:16px; }
+.detail-h1 em { font-style:italic; color:var(--leather); }
+.detail-orn { color:var(--leather); font-size:16px; letter-spacing:8px; margin:28px 0; display:block; }
+.detail-text p { font-size:17px; line-height:2.05; color:var(--ink2); margin-bottom:24px; }
+.detail-text p:first-child::first-letter { font-family:'Cormorant Garamond',serif; font-size:60px; font-weight:400; float:left; line-height:.82; margin-right:10px; margin-top:4px; color:var(--leather); }
+.detail-pull { border-left:3px solid var(--leather); padding:14px 0 14px 28px; margin:44px 0; }
+.detail-pull p { font-family:'Cormorant Garamond',serif; font-size:22px; font-style:italic; font-weight:300; line-height:1.6; color:var(--ink); margin:0; }
+.detail-pull p::first-letter { all:unset; }
+.detail-cta-wrap { margin-top:68px; padding-top:44px; border-top:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px; }
+.detail-site-label { font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--ink3); }
+.detail-site-url { font-size:13px; color:var(--ink3); margin-top:4px; }
+.btn-visit { display:inline-flex; align-items:center; gap:12px; background:var(--ink); color:var(--paper); padding:16px 32px; font-family:'DM Sans',sans-serif; font-size:10px; letter-spacing:3px; text-transform:uppercase; text-decoration:none; transition:background .3s,gap .4s; }
+.btn-visit:hover { background:var(--leather); gap:20px; }
+
+/* Reveal */
+.reveal { opacity:0; transform:translateY(24px); transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1); }
+.reveal.in { opacity:1; transform:none; }
+.d1{transition-delay:.08s}.d2{transition-delay:.18s}.d3{transition-delay:.28s}.d4{transition-delay:.38s}.d5{transition-delay:.48s}.d6{transition-delay:.58s}
+
+@keyframes fadeUp   { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+@keyframes fadeRight{ from{opacity:0;transform:translateX(32px)} to{opacity:1;transform:none} }
+
+/* ── FLOATING WHATSAPP ── */
+#waFloat{position:fixed;bottom:24px;right:24px;z-index:8900;width:58px;height:58px;border-radius:50%;background:#25D366;box-shadow:0 4px 18px rgba(37,211,102,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;border:none;transition:transform .25s,box-shadow .25s;animation:waPulse 2.5s ease-in-out infinite}
+#waFloat:hover{transform:scale(1.1);box-shadow:0 6px 24px rgba(37,211,102,.55);animation:none}
+#waFloat svg{width:32px;height:32px;fill:#fff}
+@keyframes waPulse{0%,100%{box-shadow:0 4px 18px rgba(37,211,102,.4)}50%{box-shadow:0 4px 28px rgba(37,211,102,.7)}}
+
+/* ── COOKIE BANNER ── */
+#cookieBanner{position:fixed;bottom:-200px;left:0;right:0;z-index:9000;background:rgba(28,24,18,.97);color:rgba(255,255,255,.85);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid rgba(176,128,64,.3);transition:bottom .45s cubic-bezier(.16,1,.3,1);backdrop-filter:blur(8px)}
+#cookieBanner.show{bottom:0}
+.ck-text{font-family:'DM Sans',sans-serif;font-size:12px;line-height:1.55;flex:1;min-width:180px}
+.ck-text a{color:var(--gold);text-decoration:underline}
+.ck-btns{display:flex;gap:8px;flex-shrink:0;flex-wrap:nowrap}
+.ck-ok{background:var(--leather);color:white;border:none;padding:9px 20px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;transition:background .3s;white-space:nowrap}
+.ck-ok:hover{background:var(--gold)}
+.ck-no{background:transparent;color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.2);padding:9px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;transition:all .3s;white-space:nowrap}
+.ck-no:hover{color:white;border-color:rgba(255,255,255,.5)}
+@media(max-width:600px){#cookieBanner{flex-direction:column;align-items:flex-start;padding:14px 16px;gap:10px}.ck-btns{width:100%;justify-content:flex-end}}
+
+/* Responsive */
+@media(max-width:960px){
+  #hero{grid-template-columns:1fr;padding-top:72px}
+  #hero::after{display:none}
+  .book-right{order:-1;padding:48px 8% 36px}
+  .book-left{padding:40px 8% 60px}
+  .about-grid{grid-template-columns:1fr;gap:40px}
+  .contact-grid{grid-template-columns:1fr;gap:48px}
+  .toc-row{grid-template-columns:40px 1fr 40px}
+  .toc-cat{display:none}
+  nav{padding:16px 24px}
+  nav.scrolled{padding:12px 24px}
+  .nav-center{display:none}
+  .chapter-inner{padding:0 6%}
+  .detail-body{padding:48px 6% 80px}
+}
+</style>
+</head>
+<body>
+
+<div id="main-page">
+
+<!-- NAV -->
+<nav id="nav">
+  <a class="nav-logo" href="#" data-i18n="nav_logo">M<em>.</em> De Santis</a>
+  <ul class="nav-center">
+    <li><a href="#about" data-i18n="nav_about">Chi sono</a></li>
+    <li><a href="#projects" data-i18n="nav_projects">Progetti</a></li>
+    <li><a href="#contact" data-i18n="nav_contact">Contatti</a></li>
+  </ul>
+  <div class="lang-switch">
+    <button class="lang-btn active" id="btn-it" onclick="setLang('it')">IT</button>
+    <span class="lang-sep">|</span>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="book-left">
+    <div class="book-chapter" data-i18n="hero_chapter">Imprenditore · Autore · Visionario</div>
+    <h1 class="book-name">
+      <span class="first">Massimiliano</span>
+      <span class="last">De Santis</span>
+    </h1>
+    <div class="book-rule"></div>
+    <p class="book-tagline" data-i18n="hero_tagline">Dalla tutela dell'ambiente al lusso sul Mar Rosso — ogni progetto porta la mia firma e la mia passione.</p>
+    <div class="book-btns">
+      <a href="#projects" class="btn-ink" data-i18n="hero_btn1">Scopri i progetti →</a>
+      <a href="#about" class="btn-outline" data-i18n="hero_btn2">Chi sono →</a>
+    </div>
+    <div class="page-num">I</div>
+  </div>
+  <div class="book-right">
+    <div class="photo-wrap">
+      <div class="photo-frame">
+        <img src="https://ik.imagekit.io/2gkrpnbbol/Screenshot_2026-04-29-18-05-25-52_99c04817c0de5652397fc8b56c3b3817.jpg" alt="Massimiliano De Santis">
+      </div>
+      <div class="badge">
+        <div class="badge-n">6+</div>
+        <div class="badge-t" data-i18n="badge_txt">Progetti attivi</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRIP -->
+<div class="strip"><div class="strip-inner" id="mq"></div></div>
+
+<!-- ══ CHI SONO ══ -->
+<section id="about" class="chapter">
+  <div class="chapter-inner">
+    <div class="chapter-head reveal">
+      <div class="chapter-numeral">I</div>
+      <div class="chapter-meta">
+        <span class="chapter-label" data-i18n="about_label">Capitolo Primo</span>
+        <h2 class="chapter-title" data-i18n="about_title">Una vita vissuta con <em>coraggio.</em></h2>
+      </div>
+    </div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p class="reveal d1" data-i18n="about_p1">Massimiliano De Santis nasce a Roma nel 1979 e cresce con la strada come maestra e il coraggio come bussola. Figlio di una generazione che ha imparato a costruire con le proprie mani, ha trasformato ogni ostacolo in un trampolino, ogni sconfitta in una lezione preziosa. La sua storia è quella di chi non ha aspettato che le cose andassero meglio — le ha cambiate.</p>
+        <p class="reveal d2" data-i18n="about_p2">La sua storia professionale è un mosaico di passioni autentiche: dalla difesa dell'ambiente con Stop Plastica — un'associazione che educa e sensibilizza sulle conseguenze dell'inquinamento da plastica — alla consulenza finanziaria con MDS Consulting, dove guida investitori verso asset solidi come oro, criptovalute e materie prime preziose.</p>
+        <p class="reveal d3" data-i18n="about_p3">Nel settore dell'hospitality ha costruito un brand riconoscibile: Le Stanze di Roma e Le Stanze di Sharm, un progetto che porta il calore dell'ospitalità italiana nel cuore di Roma e sulle rive del Mar Rosso a Sharm el Sheikh. Ogni camera porta il nome di una persona cara — un dettaglio che trasforma ogni soggiorno in un'esperienza personale e autentica.</p>
+        <p class="reveal d4" data-i18n="about_p4">Nel 2025 ha pubblicato il libro autobiografico "Mi racconto così" con il Gruppo Albatros. Un racconto senza filtri di chi ha scelto di trasformare le difficoltà in forza, la solitudine in carattere, la strada in scuola di vita. Un libro che parla a chiunque abbia mai dovuto lottare per costruire qualcosa di vero partendo da zero.</p>
+        <p class="reveal d5" data-i18n="about_p5">Oggi Massimiliano è un punto di riferimento per chi crede che imprenditoria, valori e bellezza possano andare di pari passo. Non ha mai smesso di chiedersi "perché no?" davanti a ogni nuova idea, e questa domanda continua a essere il motore di tutto ciò che crea e costruisce.</p>
+      </div>
+      <div class="reveal d2">
+        <div class="aside-pull">
+          <blockquote data-i18n="about_quote">"Sono cresciuto presto e da solo. Troppo presto e troppo da solo. E questa è la mia storia."</blockquote>
+          <cite data-i18n="about_quote_src">— Mi racconto così, 2025</cite>
+        </div>
+        <div class="stats-col">
+          <div class="stat-row reveal d3"><div class="stat-n">6</div><div class="stat-l" data-i18n="stat1">Progetti attivi</div></div>
+          <div class="stat-row reveal d4"><div class="stat-n">1</div><div class="stat-l" data-i18n="stat2">Libro pubblicato</div></div>
+          <div class="stat-row reveal d5"><div class="stat-n">2</div><div class="stat-l" data-i18n="stat3">Paesi</div></div>
+          <div class="stat-row reveal d6"><div class="stat-n">∞</div><div class="stat-l" data-i18n="stat4">Visione</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PROGETTI ══ -->
+<section id="projects" class="chapter"  >
+  <div class="chapter-inner">
+    <div class="chapter-head reveal">
+      <div class="chapter-numeral">II</div>
+      <div class="chapter-meta">
+        <span class="chapter-label" data-i18n="proj_label">Capitolo Secondo</span>
+        <h2 class="chapter-title" data-i18n="proj_title">I miei <em>progetti</em></h2>
+      </div>
+    </div>
+    <div class="reveal d1">
+      <div class="toc-row" onclick="openDetail('stoplastica')">
+        <span class="toc-num">I</span>
+        <div class="toc-info"><h3 data-i18n="p1_name">Stop Plastica</h3><p data-i18n="p1_sub">Associazione per l'educazione ambientale</p></div>
+        <span class="toc-cat" data-i18n="p1_cat">Ambiente</span>
+        <span class="toc-arr">→</span>
+      </div>
+      <div class="toc-row" onclick="openDetail('miraccontocosi')">
+        <span class="toc-num">II</span>
+        <div class="toc-info"><h3 data-i18n="p2_name">Mi racconto così</h3><p data-i18n="p2_sub">Libro autobiografico</p></div>
+        <span class="toc-cat" data-i18n="p2_cat">Editoria</span>
+        <span class="toc-arr">→</span>
+      </div>
+      <div class="toc-row" onclick="openDetail('mdsconsulting')">
+        <span class="toc-num">III</span>
+        <div class="toc-info"><h3 data-i18n="p3_name">MDS Consulting</h3><p data-i18n="p3_sub">Investimenti in oro, crypto e materie prime</p></div>
+        <span class="toc-cat" data-i18n="p3_cat">Finanza</span>
+        <span class="toc-arr">→</span>
+      </div>
+      <div class="toc-row" onclick="openDetail('mdsproperties')">
+        <span class="toc-num">IV</span>
+        <div class="toc-info"><h3 data-i18n="p4_name">MDS Properties</h3><p data-i18n="p4_sub">Ospitalità turistica tra Roma e Sharm</p></div>
+        <span class="toc-cat" data-i18n="p4_cat">Immobiliare</span>
+        <span class="toc-arr">→</span>
+      </div>
+      <div class="toc-row" onclick="openDetail('lestanzediroma')">
+        <span class="toc-num">V</span>
+        <div class="toc-info"><h3 data-i18n="p5_name">Le Stanze di Roma</h3><p data-i18n="p5_sub">Camere nel cuore della Città Eterna</p></div>
+        <span class="toc-cat" data-i18n="p5_cat">Hospitality</span>
+        <span class="toc-arr">→</span>
+      </div>
+      <div class="toc-row" onclick="openDetail('lestanzedisharm')">
+        <span class="toc-num">VI</span>
+        <div class="toc-info"><h3 data-i18n="p6_name">Le Stanze di Sharm</h3><p data-i18n="p6_sub">Appartamenti sul Mar Rosso</p></div>
+        <span class="toc-cat" data-i18n="p6_cat">Hospitality</span>
+        <span class="toc-arr">→</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CONTATTI ══ -->
+<section id="contact" class="chapter">
+  <div class="chapter-inner">
+    <div class="chapter-head reveal">
+      <div class="chapter-numeral">III</div>
+      <div class="chapter-meta">
+        <span class="chapter-label" data-i18n="contact_label">Capitolo Terzo</span>
+        <h2 class="chapter-title" data-i18n="contact_title">Parliamo di qualcosa di <em>grande.</em></h2>
+      </div>
+    </div>
+    <div class="contact-grid">
+      <div>
+        <p class="contact-desc reveal d1" data-i18n="contact_desc">Hai un'idea, una proposta di collaborazione o vuoi semplicemente saperne di più? Sono sempre disponibile per una conversazione.</p>
+        <div class="ci-list reveal d2">
+          <div class="ci-row">
+            <div class="ci-icon">📞</div>
+            <div><div class="ci-l" data-i18n="ci_phone">Telefono</div><div class="ci-v"><a href="tel:+393932626399">+39 393 262 6399</a></div></div>
+          </div>
+          <div class="ci-row">
+            <div class="ci-icon">✉️</div>
+            <div><div class="ci-l">Email</div><div class="ci-v ci-email">desantismassimiliano1979@gmail.com</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal d2">
+        <div class="social-h" data-i18n="social_h">Seguimi sui social</div>
+        <a class="soc-link" href="https://www.facebook.com/share/1C7ucsTxat/" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          <span class="soc-name">Facebook</span><span class="soc-handle">Massimiliano DeSantis</span>
+        </a>
+        <a class="soc-link" href="https://www.instagram.com/chiccocsl" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          <span class="soc-name">Instagram</span><span class="soc-handle">@chiccocsl</span>
+        </a>
+        <a class="soc-link" href="https://www.linkedin.com/in/massimiliano-de-santis-smetx" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          <span class="soc-name">LinkedIn</span><span class="soc-handle">Massimiliano De Santis</span>
+        </a>
+        <a class="soc-link" href="https://www.tiktok.com/@chiccocsl" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.73a8.13 8.13 0 0 0 4.77 1.52V6.8a4.86 4.86 0 0 1-1-.11z"/></svg>
+          <span class="soc-name">TikTok</span><span class="soc-handle">@chiccocsl</span>
+        </a>
+        <a class="soc-link" href="https://x.com/chiccocsl" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          <span class="soc-name">X (Twitter)</span><span class="soc-handle">@chiccocsl</span>
+        </a>
+        <a class="soc-link" href="https://www.threads.com/@chiccocsl" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.473 12.01v-.017c.027-3.579.877-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.476l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.594 12c.022 3.089.714 5.5 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 0 1 3.02.142c-.126-.742-.375-1.332-.75-1.757-.513-.586-1.298-.883-2.363-.886h-.018c-.843 0-1.983.235-2.717 1.35l-1.728-1.116c.946-1.461 2.482-2.234 4.446-2.234h.023c3.016.024 4.776 1.979 4.966 5.393.17.064.336.132.5.204 1.109.497 1.986 1.289 2.536 2.306.757 1.389.843 3.455-.255 5.553-1.267 2.382-3.349 3.476-6.816 3.503z"/></svg>
+          <span class="soc-name">Threads</span><span class="soc-handle">@chiccocsl</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Massimiliano <em>De Santis</em></div>
+  <div style="text-align:center;">
+    <p data-i18n="footer_copy">© 2026 — Tutti i diritti riservati</p>
+    <p style="margin-top:6px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:1px;color:rgba(250,248,243,.35);">P.I. IT15337781007 di Massimiliano De Santis</p>
+  </div>
+</footer>
+</div><!-- /main-page -->
+
+
+<!-- ════ DETAIL PAGES ════ -->
+
+<!-- 1 -->
+<div class="detail-page" id="detail-stoplastica">
+  <div class="detail-nav">
+    <button class="back-btn" onclick="closeDetail()"><svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg><span data-i18n="back">Indietro</span></button>
+    <span class="detail-cat-tag" data-i18n="p1_cat">Ambiente</span>
+  </div>
+  <div class="detail-body">
+    <div class="detail-chapter-label" data-i18n="p1_cat">Ambiente</div>
+    <h1 class="detail-h1">Stop <em>Plastica</em></h1>
+    <span class="detail-orn">— ◆ —</span>
+    <div class="detail-text">
+      <p data-i18n="d1_p1">Stop Plastica è un'associazione nata nel periodo post-lockdown con un obiettivo chiaro: rendere il mondo un posto migliore, partendo dalla lotta all'inquinamento da plastica. Fondata da Massimiliano De Santis, si è subito attivata per organizzare iniziative di vario tipo volte all'Educazione Ambientale e alla Salvaguardia della Natura — temi affrontati sia con gli adulti che con i bambini, nelle scuole e nelle piazze.</p>
+      <div class="detail-pull"><p data-i18n="d1_q">"Supportare Stop Plastica significa supportare l'ambiente in cui vivi."</p></div>
+      <p data-i18n="d1_p2">Grazie alla collaborazione con associazioni di volontariato locali, scuole, associazioni sportive e al patrocinio di diversi Comuni, Stop Plastica organizza eventi culturali e ambientali volti alla valorizzazione e alla difesa del territorio. Le attività spaziano dall'educazione alla raccolta fondi, dalla sensibilizzazione alla tutela ambientale concreta sul campo.</p>
+      <p data-i18n="d1_p3">L'associazione promuove campagne di sensibilizzazione credendo fermamente che il cambiamento parta dall'educazione e che ogni singola azione — anche piccola — possa contribuire a un grande cambiamento collettivo per il pianeta che abitiamo.</p>
+    </div>
+    <div class="detail-cta-wrap">
+      <div><div class="detail-site-label" data-i18n="visit_label">Sito ufficiale</div><div class="detail-site-url">www.stoplastica.eu</div></div>
+      <a class="btn-visit" href="https://www.stoplastica.eu" target="_blank" rel="noopener" data-i18n="visit_btn">Visita il sito →</a>
+    </div>
+  </div>
+</div>
+
+<!-- 2 -->
+<div class="detail-page" id="detail-miraccontocosi">
+  <div class="detail-nav">
+    <button class="back-btn" onclick="closeDetail()"><svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg><span data-i18n="back">Indietro</span></button>
+    <span class="detail-cat-tag" data-i18n="p2_cat">Editoria</span>
+  </div>
+  <div class="detail-body">
+    <div class="detail-chapter-label" data-i18n="p2_cat">Editoria</div>
+    <h1 class="detail-h1">Mi racconto <em>così</em></h1>
+    <span class="detail-orn">— ◆ —</span>
+    <div class="detail-text">
+      <p data-i18n="d2_p1">"Mi racconto così" è il libro autobiografico di Massimiliano De Santis, pubblicato con il Gruppo Albatros nel 2025. Un racconto autentico e coraggioso che inizia con una frase che dice tutto: "Io sono cresciuto presto e da solo. Troppo presto e troppo da solo. E questa è la mia storia, la storia di quel bambino apparentemente sfortunato che ha sfidato la vita e ne è uscito pieno di fortuna."</p>
+      <div class="detail-pull"><p data-i18n="d2_q">"La strada, lo stadio, la sezione del partito. Una storia vera, raccontata senza filtri."</p></div>
+      <p data-i18n="d2_p2">È la storia di un bambino che la vita ha messo alla prova precocemente e che ha saputo trasformare ogni difficoltà in una lezione di vita. Un percorso di crescita personale narrato con la stessa onestà con cui Massimiliano ha affrontato ogni sfida della sua esistenza.</p>
+      <p data-i18n="d2_p3">Il libro è disponibile nelle principali librerie e piattaforme italiane: Amazon, Feltrinelli, Mondadori, e direttamente sul sito del Gruppo Albatros.</p>
+    </div>
+    <div class="detail-cta-wrap">
+      <div><div class="detail-site-label" data-i18n="visit_label">Sito ufficiale</div><div class="detail-site-url">www.miraccontocosi.it</div></div>
+      <a class="btn-visit" href="https://www.miraccontocosi.it" target="_blank" rel="noopener" data-i18n="visit_btn">Visita il sito →</a>
+    </div>
+  </div>
+</div>
+
+<!-- 3 -->
+<div class="detail-page" id="detail-mdsconsulting">
+  <div class="detail-nav">
+    <button class="back-btn" onclick="closeDetail()"><svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg><span data-i18n="back">Indietro</span></button>
+    <span class="detail-cat-tag" data-i18n="p3_cat">Finanza</span>
+  </div>
+  <div class="detail-body">
+    <div class="detail-chapter-label" data-i18n="p3_cat">Finanza</div>
+    <h1 class="detail-h1">MDS <em>Consulting</em></h1>
+    <span class="detail-orn">— ◆ —</span>
+    <div class="detail-text">
+      <p data-i18n="d3_p1">MDS Consulting nasce con l'obiettivo di offrire competenza, affidabilità e visione strategica nel settore delle materie prime, metalli e asset digitali. In un mondo in continua trasformazione, il team combina analisi approfondita dei mercati globali, innovazione tecnologica e tradizione finanziaria per garantire ai clienti strumenti concreti e sicuri con cui costruire il proprio futuro.</p>
+      <div class="detail-pull"><p data-i18n="d3_q">"Guidiamo il valore, costruiamo il futuro."</p></div>
+      <p data-i18n="d3_p2">I servizi spaziano dagli investimenti in Bitcoin e criptovalute alla consulenza su oro fisico e metalli preziosi, fino alle opportunità di investimento diretto in Egitto. Il team è composto da professionisti con esperienza internazionale, capaci di interpretare i trend globali e trasformarli in opportunità di crescita per ogni cliente.</p>
+      <p data-i18n="d3_p3">MDS Consulting si distingue per un approccio personale e trasparente: non esistono soluzioni standardizzate, ma percorsi costruiti su misura in base agli obiettivi e alla propensione al rischio di ciascun investitore.</p>
+    </div>
+    <div class="detail-cta-wrap">
+      <div><div class="detail-site-label" data-i18n="visit_label">Sito ufficiale</div><div class="detail-site-url">www.mds-consulting.net</div></div>
+      <a class="btn-visit" href="https://www.mds-consulting.net" target="_blank" rel="noopener" data-i18n="visit_btn">Visita il sito →</a>
+    </div>
+  </div>
+</div>
+
+<!-- 4 -->
+<div class="detail-page" id="detail-mdsproperties">
+  <div class="detail-nav">
+    <button class="back-btn" onclick="closeDetail()"><svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg><span data-i18n="back">Indietro</span></button>
+    <span class="detail-cat-tag" data-i18n="p4_cat">Immobiliare</span>
+  </div>
+  <div class="detail-body">
+    <div class="detail-chapter-label" data-i18n="p4_cat">Immobiliare</div>
+    <h1 class="detail-h1">MDS <em>Properties</em></h1>
+    <span class="detail-orn">— ◆ —</span>
+    <div class="detail-text">
+      <p data-i18n="d4_p1">MDS Properties è il progetto immobiliare e di ospitalità turistica di Massimiliano De Santis. L'idea nasce dalla passione autentica per i viaggi e dall'esperienza maturata nel settore turistico internazionale, con un obiettivo preciso: creare spazi accoglienti e curati, dedicati ai viaggiatori provenienti da tutto il mondo.</p>
+      <div class="detail-pull"><p data-i18n="d4_q">"Ospitalità, comfort e libertà di viaggio tra Roma e il Mar Rosso."</p></div>
+      <p data-i18n="d4_p2">Il progetto raggruppa sotto un unico brand due destinazioni d'eccellenza: Le Stanze di Roma, nel cuore pulsante della Città Eterna, e Le Stanze di Sharm, affacciate sul cristallino Mar Rosso. Due luoghi uniti dalla stessa filosofia: ospitalità autentica e personale che fa sentire ogni ospite davvero a casa.</p>
+      <p data-i18n="d4_p3">MDS Properties gestisce affitti brevi e offre opportunità di investimento immobiliare nelle sue destinazioni, per chi desidera unire reddito passivo e bellezza in luoghi di straordinario valore turistico.</p>
+    </div>
+    <div class="detail-cta-wrap">
+      <div><div class="detail-site-label" data-i18n="visit_label">Sito ufficiale</div><div class="detail-site-url">www.mdsproperties.it</div></div>
+      <a class="btn-visit" href="https://www.mdsproperties.it" target="_blank" rel="noopener" data-i18n="visit_btn">Visita il sito →</a>
+    </div>
+  </div>
+</div>
+
+<!-- 5 -->
+<div class="detail-page" id="detail-lestanzediroma">
+  <div class="detail-nav">
+    <button class="back-btn" onclick="closeDetail()"><svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg><span data-i18n="back">Indietro</span></button>
+    <span class="detail-cat-tag" data-i18n="p5_cat">Hospitality</span>
+  </div>
+  <div class="detail-body">
+    <div class="detail-chapter-label" data-i18n="p5_cat">Hospitality</div>
+    <h1 class="detail-h1">Le Stanze<br><em>di Roma</em></h1>
+    <span class="detail-orn">— ◆ —</span>
+    <div class="detail-text">
+      <p data-i18n="d5_p1">Le Stanze di Roma è un progetto dedicato ai viaggiatori che vogliono vivere la capitale italiana in modo autentico, lontano dall'anonimato dei grandi hotel. Camere e appartamenti selezionati con cura, pensati per offrire un'esperienza semplice, piacevole e genuinamente romana — in zone ben collegate al cuore della città.</p>
+      <div class="detail-pull"><p data-i18n="d5_q">"Ogni stanza prende il nome di persone a noi care che amiamo."</p></div>
+      <p data-i18n="d5_p2">Ogni struttura è curata nei minimi dettagli, con particolare attenzione al comfort quotidiano e alla praticità del soggiorno. Un brand in costante crescita che porta lo stesso spirito nato sulle rive del Mar Rosso nel cuore della Città Eterna.</p>
+      <p data-i18n="d5_p3">Il progetto fa parte dell'ecosistema MDS Properties e condivide la stessa identità profonda: ogni camera porta il nome di una persona cara a Massimiliano, trasformando ogni soggiorno in qualcosa di personale, caldo e indimenticabile.</p>
+    </div>
+    <div class="detail-cta-wrap">
+      <div><div class="detail-site-label" data-i18n="visit_label">Sito ufficiale</div><div class="detail-site-url">www.lestanzediroma.it</div></div>
+      <a class="btn-visit" href="https://www.lestanzediroma.it" target="_blank" rel="noopener" data-i18n="visit_btn">Visita il sito →</a>
+    </div>
+  </div>
+</div>
+
+<!-- 6 -->
+<div class="detail-page" id="detail-lestanzedisharm">
+  <div class="detail-nav">
+    <button class="back-btn" onclick="closeDetail()"><svg viewBox="0 0 24 24"><polyline points="15,18 9,12 15,6"/></svg><span data-i18n="back">Indietro</span></button>
+    <span class="detail-cat-tag" data-i18n="p6_cat">Hospitality</span>
+  </div>
+  <div class="detail-body">
+    <div class="detail-chapter-label" data-i18n="p6_cat">Hospitality</div>
+    <h1 class="detail-h1">Le Stanze<br><em>di Sharm</em></h1>
+    <span class="detail-orn">— ◆ —</span>
+    <div class="detail-text">
+      <p data-i18n="d6_p1">Le Stanze di Sharm nasce per chi vuole vivere Sharm el Sheikh in modo autentico, con la cura e il calore di chi conosce davvero quel posto. Camere e appartamenti curati nei minimi dettagli all'interno del celebre Domina Coral Bay, con assistenza completa in italiano — un vantaggio fondamentale per chi viaggia dall'Italia.</p>
+      <div class="detail-pull"><p data-i18n="d6_q">"Camere e appartamenti nel cuore del Mar Rosso, tra barriere coralline e sole tutto l'anno."</p></div>
+      <p data-i18n="d6_p2">Le strutture si trovano a pochi passi dalla spiaggia e dalla barriera corallina. Ogni camera porta il nome di una persona cara a Massimiliano — un gesto che trasforma ogni soggiorno in qualcosa di profondamente personale e autentico.</p>
+      <p data-i18n="d6_p3">Le Stanze di Sharm offre anche opportunità di investimento immobiliare a Sharm el Sheikh, con prezzi ancora competitivi e un mercato in forte crescita — per chi desidera unire vacanza e investimento.</p>
+    </div>
+    <div class="detail-cta-wrap">
+      <div><div class="detail-site-label" data-i18n="visit_label">Sito ufficiale</div><div class="detail-site-url">www.lestanzedisharm.com</div></div>
+      <a class="btn-visit" href="https://www.lestanzedisharm.com" target="_blank" rel="noopener" data-i18n="visit_btn">Visita il sito →</a>
+    </div>
+  </div>
+</div>
+
+
+<!-- ── COOKIE BANNER ── -->
+<div id="cookieBanner">
+  <div class="ck-text">
+    🍪 Questo sito utilizza cookie tecnici necessari al funzionamento e, previo consenso, cookie analitici per migliorare l'esperienza. Consulta la nostra <a href="#" onclick="return false;">Privacy Policy</a>.
+  </div>
+  <div class="ck-btns">
+    <button class="ck-no" onclick="cookieChoice(false)">Rifiuta</button>
+    <button class="ck-ok" onclick="cookieChoice(true)">Accetta</button>
+  </div>
+</div>
+
+<!-- ── FLOATING WHATSAPP ── -->
+<a id="waFloat" href="https://wa.me/393932626399" target="_blank" rel="noopener" aria-label="Contattaci su WhatsApp">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script>
+const T={
+  it:{
+    nav_about:'Chi sono',nav_projects:'Progetti',nav_contact:'Contatti',
+    hero_chapter:'Imprenditore · Autore · Visionario',
+    hero_tagline:"Dalla tutela dell'ambiente al lusso sul Mar Rosso — ogni progetto porta la mia firma e la mia passione.",
+    hero_btn1:'Scopri i progetti →',hero_btn2:'Chi sono →',badge_txt:'Progetti attivi',
+    about_label:'Capitolo Primo',about_title:'Una vita vissuta con <em>coraggio.</em>',
+    about_p1:"Massimiliano De Santis nasce a Roma nel 1979 e cresce con la strada come maestra e il coraggio come bussola. Figlio di una generazione che ha imparato a costruire con le proprie mani, ha trasformato ogni ostacolo in un trampolino, ogni sconfitta in una lezione preziosa. La sua storia è quella di chi non ha aspettato che le cose andassero meglio — le ha cambiate.",
+    about_p2:"La sua storia professionale è un mosaico di passioni autentiche: dalla difesa dell'ambiente con Stop Plastica, alla consulenza finanziaria con MDS Consulting, dove guida investitori verso asset solidi come oro, criptovalute e materie prime preziose.",
+    about_p3:"Nel settore dell'hospitality ha costruito un brand riconoscibile: Le Stanze di Roma e Le Stanze di Sharm, un progetto che porta il calore dell'ospitalità italiana nel cuore di Roma e sulle rive del Mar Rosso a Sharm el Sheikh. Ogni camera porta il nome di una persona cara — un dettaglio che trasforma ogni soggiorno in un'esperienza autentica.",
+    about_p4:'Nel 2025 ha pubblicato il libro autobiografico "Mi racconto così" con il Gruppo Albatros. Un racconto senza filtri di chi ha scelto di trasformare le difficoltà in forza, la solitudine in carattere, la strada in scuola di vita.',
+    about_p5:'Oggi Massimiliano è un punto di riferimento per chi crede che imprenditoria, valori e bellezza possano andare di pari passo. Non ha mai smesso di chiedersi "perché no?" davanti a ogni nuova idea.',
+    about_quote:'"Sono cresciuto presto e da solo. Troppo presto e troppo da solo. E questa è la mia storia."',
+    about_quote_src:'— Mi racconto così, 2025',
+    stat1:'Progetti attivi',stat2:'Libro pubblicato',stat3:'Paesi',stat4:'Visione',
+    proj_label:'Capitolo Secondo',proj_title:'I miei <em>progetti</em>',
+    p1_name:'Stop Plastica',p1_sub:"Associazione per l'educazione ambientale",p1_cat:'Ambiente',
+    p2_name:'Mi racconto così',p2_sub:'Libro autobiografico',p2_cat:'Editoria',
+    p3_name:'MDS Consulting',p3_sub:'Investimenti in oro, crypto e materie prime',p3_cat:'Finanza',
+    p4_name:'MDS Properties',p4_sub:'Ospitalità turistica tra Roma e Sharm',p4_cat:'Immobiliare',
+    p5_name:'Le Stanze di Roma',p5_sub:'Camere nel cuore della Città Eterna',p5_cat:'Hospitality',
+    p6_name:'Le Stanze di Sharm',p6_sub:'Appartamenti sul Mar Rosso',p6_cat:'Hospitality',
+    contact_label:'Capitolo Terzo',contact_title:'Parliamo di qualcosa di <em>grande.</em>',
+    contact_desc:"Hai un'idea, una proposta di collaborazione o vuoi semplicemente saperne di più? Sono sempre disponibile per una conversazione.",
+    ci_phone:'Telefono',social_h:'Seguimi sui social',
+    back:'Indietro',visit_label:'Sito ufficiale',visit_btn:'Visita il sito →',
+    d1_p1:"Stop Plastica è un'associazione nata nel periodo post-lockdown con un obiettivo chiaro: rendere il mondo un posto migliore, partendo dalla lotta all'inquinamento da plastica. Fondata da Massimiliano De Santis, si è subito attivata per organizzare iniziative volte all'Educazione Ambientale e alla Salvaguardia della Natura — temi affrontati sia con gli adulti che con i bambini.",
+    d1_q:"\"Supportare Stop Plastica significa supportare l'ambiente in cui vivi.\"",
+    d1_p2:'Grazie alla collaborazione con associazioni di volontariato locali, scuole, associazioni sportive e al patrocinio di diversi Comuni, Stop Plastica organizza eventi culturali e ambientali volti alla valorizzazione e alla difesa del territorio.',
+    d1_p3:"L'associazione promuove campagne di sensibilizzazione credendo fermamente che il cambiamento parta dall'educazione e che ogni piccola azione possa contribuire a un grande cambiamento collettivo.",
+    d2_p1:'"Mi racconto così" è il libro autobiografico di Massimiliano De Santis, pubblicato con il Gruppo Albatros nel 2025. Un racconto autentico che inizia con una frase che dice tutto: "Io sono cresciuto presto e da solo. Troppo presto e troppo da solo."',
+    d2_q:'"La strada, lo stadio, la sezione del partito. Una storia vera, raccontata senza filtri."',
+    d2_p2:'È la storia di un bambino che la vita ha messo alla prova precocemente e che ha saputo trasformare ogni difficoltà in una lezione. Un percorso di crescita narrato con la stessa onestà con cui Massimiliano ha affrontato ogni sfida.',
+    d2_p3:'Il libro è disponibile su Amazon, Feltrinelli, Mondadori e sul sito del Gruppo Albatros.',
+    d3_p1:"MDS Consulting nasce con l'obiettivo di offrire competenza, affidabilità e visione strategica nel settore delle materie prime, metalli e asset digitali. Il team combina analisi dei mercati globali, innovazione tecnologica e tradizione finanziaria.",
+    d3_q:'"Guidiamo il valore, costruiamo il futuro."',
+    d3_p2:'I servizi spaziano dagli investimenti in Bitcoin e criptovalute alla consulenza su oro fisico, fino alle opportunità in Egitto. Professionisti con esperienza internazionale costruiscono percorsi su misura per ogni cliente.',
+    d3_p3:'MDS Consulting si distingue per un approccio personale e trasparente: non esistono soluzioni standardizzate, ma strategie costruite in base agli obiettivi di ciascun investitore.',
+    d4_p1:"MDS Properties è il progetto immobiliare e di ospitalità turistica di Massimiliano De Santis. L'idea nasce dalla passione per i viaggi e dall'esperienza nel settore turistico, con l'obiettivo di creare spazi accoglienti per i viaggiatori di tutto il mondo.",
+    d4_q:'"Ospitalità, comfort e libertà di viaggio tra Roma e il Mar Rosso."',
+    d4_p2:"Il progetto raggruppa due destinazioni d'eccellenza: Le Stanze di Roma e Le Stanze di Sharm. Due luoghi uniti dalla stessa filosofia: ospitalità autentica che fa sentire ogni ospite davvero a casa.",
+    d4_p3:'MDS Properties gestisce affitti brevi e offre opportunità di investimento immobiliare nelle sue destinazioni.',
+    d5_p1:"Le Stanze di Roma è un progetto dedicato ai viaggiatori che vogliono vivere la capitale in modo autentico. Camere e appartamenti selezionati, in zone ben collegate e a pochi passi dalle principali attrazioni della città.",
+    d5_q:'"Ogni stanza prende il nome di persone a noi care che amiamo."',
+    d5_p2:"Ogni struttura è curata nei dettagli, con attenzione al comfort e alla praticità. Un brand in costante crescita che porta lo stesso spirito di Le Stanze di Sharm nel cuore della Città Eterna.",
+    d5_p3:"Il progetto fa parte dell'ecosistema MDS Properties e condivide la stessa identità: ogni camera porta il nome di una persona cara a Massimiliano.",
+    d6_p1:"Le Stanze di Sharm nasce per chi vuole vivere Sharm el Sheikh in modo autentico. Camere e appartamenti curati all'interno del Domina Coral Bay, con assistenza completa in italiano.",
+    d6_q:'"Camere e appartamenti nel cuore del Mar Rosso, tra barriere coralline e sole tutto l\'anno."',
+    d6_p2:"Le strutture si trovano a pochi passi dalla spiaggia e dalla barriera corallina. Ogni camera porta il nome di una persona cara a Massimiliano, trasformando ogni soggiorno in qualcosa di personale e indimenticabile.",
+    d6_p3:"Le Stanze di Sharm offre anche opportunità di investimento immobiliare a Sharm el Sheikh, con prezzi competitivi e un mercato in forte crescita.",
+    footer_copy:'© 2026 — Tutti i diritti riservati'
+  },
+  en:{
+    nav_about:'About',nav_projects:'Projects',nav_contact:'Contact',
+    hero_chapter:'Entrepreneur · Author · Visionary',
+    hero_tagline:'From environmental protection to luxury on the Red Sea — every project carries my signature and my passion.',
+    hero_btn1:'Explore projects →',hero_btn2:'About me →',badge_txt:'Active projects',
+    about_label:'Chapter One',about_title:'A life lived with <em>courage.</em>',
+    about_p1:'Massimiliano De Santis was born in Rome in 1979 and grew up with the street as his teacher and courage as his compass. A self-made man who transformed every obstacle into a springboard and every defeat into a precious lesson. His is the story of someone who did not wait for things to get better — he changed them.',
+    about_p2:'His professional journey is a mosaic of authentic passions: from environmental advocacy with Stop Plastica, to financial consulting with MDS Consulting, where he guides investors toward solid assets such as gold, cryptocurrencies, and precious commodities.',
+    about_p3:'In the hospitality sector, he built a recognizable brand: Le Stanze di Roma and Le Stanze di Sharm, a project that brings Italian hospitality to the heart of Rome and to the shores of the Red Sea in Sharm el Sheikh. Every room is named after someone dear to him.',
+    about_p4:'In 2025, he published the autobiographical book "Mi racconto così" with Gruppo Albatros. An unfiltered account of someone who chose to turn hardship into strength, solitude into character, and the street into a school of life.',
+    about_p5:'Today Massimiliano is a reference point for those who believe that entrepreneurship, values and beauty can go hand in hand. He has never stopped asking "why not?" in the face of every new idea.',
+    about_quote:'"I grew up fast and alone. Too fast and too alone. And this is my story."',
+    about_quote_src:'— Mi racconto così, 2025',
+    stat1:'Active projects',stat2:'Published book',stat3:'Countries',stat4:'Vision',
+    proj_label:'Chapter Two',proj_title:'My <em>projects</em>',
+    p1_name:'Stop Plastica',p1_sub:'Environmental education association',p1_cat:'Environment',
+    p2_name:'Mi racconto così',p2_sub:'Autobiographical book',p2_cat:'Publishing',
+    p3_name:'MDS Consulting',p3_sub:'Investments in gold, crypto & commodities',p3_cat:'Finance',
+    p4_name:'MDS Properties',p4_sub:'Tourist hospitality between Rome & Sharm',p4_cat:'Real Estate',
+    p5_name:'Le Stanze di Roma',p5_sub:'Rooms in the heart of the Eternal City',p5_cat:'Hospitality',
+    p6_name:'Le Stanze di Sharm',p6_sub:'Apartments on the Red Sea',p6_cat:'Hospitality',
+    contact_label:'Chapter Three',contact_title:'Let\'s talk about something <em>big.</em>',
+    contact_desc:'Do you have an idea, a collaboration proposal, or simply want to know more? I\'m always available for a conversation.',
+    ci_phone:'Phone',social_h:'Follow me on social media',
+    back:'Back',visit_label:'Official website',visit_btn:'Visit website →',
+    d1_p1:'Stop Plastica is an association founded in the post-lockdown period with a clear goal: to make the world a better place, starting with the fight against plastic pollution. Founded by Massimiliano De Santis, it immediately organized initiatives focused on Environmental Education and Nature Conservation.',
+    d1_q:'"Supporting Stop Plastica means supporting the environment you live in."',
+    d1_p2:'Through collaboration with local volunteer associations, schools, sports clubs and the patronage of several Municipalities, Stop Plastica organizes cultural and environmental events aimed at protecting and enhancing local territory.',
+    d1_p3:'The association promotes awareness campaigns firmly believing that change starts with education and every small action contributes to a great collective change for our planet.',
+    d2_p1:'"Mi racconto così" is Massimiliano De Santis\'s autobiographical book, published with Gruppo Albatros in 2025. An authentic account that begins: "I grew up fast and alone. Too fast and too alone."',
+    d2_q:'"The street, the stadium, the party branch. A true story, told without filters."',
+    d2_p2:'It is the story of a child whom life tested early, who transformed every difficulty into a life lesson. A personal growth journey narrated with the same honesty Massimiliano brought to every challenge.',
+    d2_p3:'The book is available on Amazon, Feltrinelli, Mondadori and on the Gruppo Albatros website.',
+    d3_p1:'MDS Consulting was founded to offer expertise, reliability and strategic vision in commodities, metals and digital assets. The team combines global market analysis, technological innovation and financial tradition.',
+    d3_q:'"We guide value, we build the future."',
+    d3_p2:'Services range from Bitcoin and cryptocurrency investments to physical gold consulting, through to direct investment opportunities in Egypt. An international team building tailored strategies for each client.',
+    d3_p3:"MDS Consulting stands out for a personal and transparent approach: no standardized solutions, but strategies built around each investor's goals and risk tolerance.",
+    d4_p1:"MDS Properties is Massimiliano De Santis's real estate and tourist hospitality project, born from a genuine passion for travel and experience in international tourism.",
+    d4_q:'"Hospitality, comfort and freedom of travel between Rome and the Red Sea."',
+    d4_p2:'The project brings together two excellent destinations: Le Stanze di Roma and Le Stanze di Sharm. Two places united by the same philosophy: authentic hospitality that makes every guest feel truly at home.',
+    d4_p3:'MDS Properties manages short-term rentals and offers real estate investment opportunities at its destinations.',
+    d5_p1:"Le Stanze di Roma is a project for travelers who want to experience the Italian capital authentically. Carefully selected rooms and apartments in well-connected areas, steps away from the city's major attractions.",
+    d5_q:'"Every room is named after people dear to us that we love."',
+    d5_p2:'Every property is carefully curated with attention to daily comfort and practicality. A growing brand bringing the same spirit born on the Red Sea shores to the heart of the Eternal City.',
+    d5_p3:'The project is part of the MDS Properties ecosystem and shares the same identity: every room carries the name of someone dear to Massimiliano.',
+    d6_p1:'Le Stanze di Sharm was created for those who want to experience Sharm el Sheikh authentically. Carefully curated rooms and apartments within the Domina Coral Bay resort, with full Italian-language assistance.',
+    d6_q:'"Rooms and apartments in the heart of the Red Sea, among coral reefs and year-round sunshine."',
+    d6_p2:"Properties are steps from the beach and coral reef. Each room carries the name of someone dear to Massimiliano, turning every stay into something personal and unforgettable.",
+    d6_p3:'Le Stanze di Sharm also offers real estate investment opportunities in Sharm el Sheikh, with competitive prices and a strongly growing market.',
+    footer_copy:'© 2026 — All rights reserved'
+  }
+};
+
+let lang='it';
+
+function setLang(l){
+  lang=l;
+  document.getElementById('btn-it').classList.toggle('active',l==='it');
+  document.getElementById('btn-en').classList.toggle('active',l==='en');
+  document.documentElement.lang=l;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    if(T[l][k]!==undefined) el.innerHTML=T[l][k];
+  });
+}
+
+// Marquee
+const words=['Stop Plastica','Mi racconto così','MDS Consulting','MDS Properties','Le Stanze di Roma','Le Stanze di Sharm'];
+const mq=document.getElementById('mq');
+[...words,...words,...words,...words].forEach((w,i)=>{
+  const s=document.createElement('span');s.className='si';s.textContent=w;mq.appendChild(s);
+  const d=document.createElement('span');d.className='sd';d.textContent='◆';mq.appendChild(d);
+});
+
+// Nav
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>60));
+
+// Reveal
+const obs=new IntersectionObserver(es=>{
+  es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target);}});
+},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Cookie banner
+(function(){
+  if(!localStorage.getItem('mds_cookie_choice')){
+    setTimeout(()=>document.getElementById('cookieBanner').classList.add('show'), 900);
+  }
+})();
+function cookieChoice(accepted){
+  localStorage.setItem('mds_cookie_choice', accepted?'accepted':'rejected');
+  const b=document.getElementById('cookieBanner');
+  b.classList.remove('show');
+  b.style.transition='bottom .45s cubic-bezier(.16,1,.3,1)';
+  b.style.bottom='-200px';
+  setTimeout(()=>{ b.style.display='none'; }, 500);
+}
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Detail pages
+function openDetail(id){
+  document.getElementById('main-page').style.display='none';
+  const p=document.getElementById('detail-'+id);
+  p.classList.add('active');
+  p.scrollTop=0;
+  window.scrollTo(0,0);
+  // apply current lang to detail
+  document.querySelectorAll('.detail-page [data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    if(T[lang][k]!==undefined) el.innerHTML=T[lang][k];
+  });
+}
+function closeDetail(){
+  document.querySelectorAll('.detail-page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('main-page').style.display='';
+  setTimeout(()=>document.getElementById('projects').scrollIntoView({behavior:'smooth',block:'start'}),50);
+}
+</script>
+</body>
+</html>
