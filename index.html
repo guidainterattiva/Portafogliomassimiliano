@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Massimiliano De Santis</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400&family=Noto+Sans+Arabic:wght@300;400&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 :root {
@@ -31,10 +31,28 @@ nav.scrolled { border-bottom-color:var(--line); padding:14px 72px; }
 .nav-center { display:flex; gap:36px; list-style:none; }
 .nav-center a { font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:2.5px; text-transform:uppercase; color:var(--ink2); text-decoration:none; transition:color .3s; }
 .nav-center a:hover { color:var(--leather); }
-.lang-switch { display:flex; align-items:center; gap:4px; }
-.lang-btn { background:none; border:none; padding:6px 10px; cursor:pointer; color:var(--ink3); font-size:11px; letter-spacing:2px; font-family:'DM Sans',sans-serif; transition:color .3s; }
-.lang-btn.active { color:var(--ink); font-weight:500; border-bottom:1px solid var(--leather); }
-.lang-sep { color:var(--line); font-size:13px; }
+.lang-switch{position:relative}
+.lang-trigger{display:flex;align-items:center;gap:.35rem;background:none;border:1px solid var(--line);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:.65rem;font-weight:600;letter-spacing:.12em;line-height:1;padding:.42rem .65rem;cursor:pointer;transition:all .3s;text-transform:uppercase;border-radius:3px}
+.lang-trigger:hover{background:var(--paper2);border-color:var(--leather)}
+.lang-trigger-flag{font-size:.95rem;line-height:1;letter-spacing:0}
+.lang-trigger-caret{font-size:.55rem;opacity:.65}
+.lang-panel{position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1px solid rgba(0,0,0,.08);box-shadow:0 12px 32px rgba(0,0,0,.14);border-radius:4px;min-width:170px;padding:.3rem;z-index:400;opacity:0;visibility:hidden;transform:translateY(-6px);transition:all .18s}
+.lang-switch.open .lang-panel{opacity:1;visibility:visible;transform:translateY(0)}
+.lang-opt{display:flex;align-items:center;gap:.6rem;width:100%;background:none;border:none;text-align:start;padding:.5rem .65rem;font-family:'DM Sans',sans-serif;font-size:.72rem;font-weight:400;letter-spacing:.02em;color:var(--ink);cursor:pointer;border-radius:3px;transition:background .15s}
+.lang-opt:hover{background:rgba(124,92,60,.1)}
+.lang-opt.active{background:rgba(124,92,60,.15);font-weight:600}
+.lang-opt-flag{font-size:1rem;line-height:1}
+html[dir=rtl] .lang-panel{right:auto;left:0}
+html[dir=rtl] .lang-trigger-caret{transform:scaleX(-1)}
+/* ── RTL ── */
+body.rtl-active{font-family:'Noto Sans Arabic','Lora',sans-serif}
+body.rtl-active *{letter-spacing:0 !important}
+body.rtl-active .book-left{padding-right:10%;padding-left:72px}
+body.rtl-active .aside-pull{border-left:none;border-right:3px solid var(--leather);padding-left:0;padding-right:28px}
+body.rtl-active .detail-pull{border-left:none;border-right:3px solid var(--leather);padding-left:0;padding-right:28px}
+body.rtl-active .chapter-head{flex-direction:row-reverse}
+body.rtl-active .toc-row{direction:rtl}
+body.rtl-active .book-chapter,.lang-opt-name{flex-direction:row-reverse}
 
 /* ── MAIN PAGE ── */
 #main-page { position:relative; z-index:1; }
@@ -219,10 +237,13 @@ footer p { font-family:'DM Sans',sans-serif; font-size:11px; letter-spacing:1px;
     <li><a href="#projects" data-i18n="nav_projects">Progetti</a></li>
     <li><a href="#contact" data-i18n="nav_contact">Contatti</a></li>
   </ul>
-  <div class="lang-switch">
-    <button class="lang-btn active" id="btn-it" onclick="setLang('it')">IT</button>
-    <span class="lang-sep">|</span>
-    <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+  <div class="lang-switch" id="langSwitch">
+    <button type="button" class="lang-trigger" aria-label="Lingua / Language" aria-haspopup="true" aria-expanded="false" onclick="toggleLangPanel(this.parentNode)">
+      <span class="lang-trigger-flag">🇮🇹</span>
+      <span class="lang-trigger-code">IT</span>
+      <span class="lang-trigger-caret">▾</span>
+    </button>
+    <div class="lang-panel"></div>
   </div>
 </nav>
 
@@ -699,18 +720,266 @@ const T={
   }
 };
 
+// ── SISTEMA 9 LINGUE ──────────────────────────────────────
+const LANG_META={
+  it:{flag:'🇮🇹',name:'Italiano'},en:{flag:'🇬🇧',name:'English'},
+  fr:{flag:'🇫🇷',name:'Français'},de:{flag:'🇩🇪',name:'Deutsch'},
+  es:{flag:'🇪🇸',name:'Español'},ru:{flag:'🇷🇺',name:'Русский'},
+  pt:{flag:'🇵🇹',name:'Português'},pl:{flag:'🇵🇱',name:'Polski'},
+  ar:{flag:'🇸🇦',name:'العربية'}
+};
+const SUPPORTED_LANGS=Object.keys(LANG_META);
+const RTL_LANGS=['ar'];
 let lang='it';
+let langToken=0;
 
-function setLang(l){
+// ── Brand protetti ──
+const PROTECTED_TERMS=[
+  'Massimiliano De Santis','MDS Consulting','MDS Properties','Stoplastica',
+  'Le Stanze di Roma','Le Stanze di Sharm','Le Stanze di Pescorocchiano',
+  'Le Stanze','Sereno Vacanze','Domina Coral Bay','Sharm el Sheikh',
+  'Mi racconto così','Gruppo Albatros','Lago del Salto',
+  'Montagne della Duchessa','Mar Rosso','Città Eterna',
+  'Bitcoin','Airbnb','Booking','Cicolano','Rieti','Pescorocchiano'
+];
+const PROTECTED_RE=new RegExp(
+  PROTECTED_TERMS.slice().sort((a,b)=>b.length-a.length)
+    .map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|'),'g');
+function protectTerms(text){
+  const found=[];
+  const out=text.replace(PROTECTED_RE,m=>{found.push(m);return 'QZ'+(found.length-1)+'ZQ';});
+  return {text:out,found};
+}
+function unprotectTerms(text,found){
+  let restored=0;
+  const out=text.replace(/QZ\s*([0-9]+)\s*ZQ/gi,(m,d)=>{
+    const idx=parseInt(d,10);
+    if(found[idx]===undefined) return m;
+    restored++; return found[idx];
+  });
+  return restored===found.length?out:null;
+}
+
+// ── Cache ──
+const TR_PREFIX='mds_tr_';
+const trCache={};
+function getCache(l){
+  if(!trCache[l]){
+    try{trCache[l]=JSON.parse(localStorage.getItem(TR_PREFIX+l)||'{}');}catch(e){trCache[l]={};}
+  }
+  return trCache[l];
+}
+function saveCache(l){
+  try{localStorage.setItem(TR_PREFIX+l,JSON.stringify(trCache[l]||{}));}catch(e){}
+}
+
+// ── Motore traduzione ──
+function splitForFallback(text){
+  const limit=450;
+  const size=s=>new Blob([s]).size;
+  if(size(text)<=limit) return [text];
+  const sentences=text.split(/(?<=[.!?])\s+/);
+  const chunks=[];let buf='';
+  for(const s of sentences){
+    if(!buf){buf=s;continue;}
+    if(size(buf+' '+s)<=limit) buf+=' '+s;
+    else{chunks.push(buf);buf=s;}
+  }
+  if(buf) chunks.push(buf);
+  const final=[];
+  for(const ch of chunks){
+    if(size(ch)<=limit){final.push(ch);continue;}
+    let cur='';
+    for(const w of ch.split(/\s+/)){
+      if(cur&&size(cur+' '+w)>limit){final.push(cur);cur=w;}
+      else cur=cur?cur+' '+w:w;
+    }
+    if(cur) final.push(cur);
+  }
+  return final;
+}
+async function rawTranslate(text,tl){
+  let out=null;
+  try{
+    const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=it&tl='+encodeURIComponent(tl)+'&dt=t&q='+encodeURIComponent(text);
+    const data=await(await fetch(url)).json();
+    if(Array.isArray(data)&&Array.isArray(data[0])){
+      const j=data[0].map(seg=>seg[0]).join('');
+      if(j&&j.trim()) out=j;
+    }
+  }catch(e){}
+  if(!out){
+    try{
+      const pieces=splitForFallback(text);
+      const done=[];
+      for(const piece of pieces){
+        const url='https://api.mymemory.translated.net/get?q='+encodeURIComponent(piece)+'&langpair=it|'+encodeURIComponent(tl);
+        const data=await(await fetch(url)).json();
+        if(data.responseStatus===200&&data.responseData&&data.responseData.translatedText){
+          done.push(data.responseData.translatedText);
+        }else{done.length=0;break;}
+      }
+      if(done.length) out=done.join(' ');
+    }catch(e){}
+  }
+  return out;
+}
+async function translateText(text,tl){
+  if(!text||!text.trim()||tl==='it') return text;
+  const cache=getCache(tl);
+  const key=text.trim();
+  if(Object.prototype.hasOwnProperty.call(cache,key)) return cache[key];
+  let out=null;
+  const prot=protectTerms(text);
+  if(prot.found.length){
+    const raw=await rawTranslate(prot.text,tl);
+    if(raw) out=unprotectTerms(raw,prot.found);
+  }
+  if(!out) out=await rawTranslate(text,tl);
+  if(out){cache[key]=out;saveCache(tl);}
+  return out;
+}
+async function runPooled(items,worker,poolSize){
+  const queue=items.slice();
+  const runners=[];
+  for(let i=0;i<Math.min(poolSize,queue.length);i++){
+    runners.push((async()=>{
+      while(queue.length){const item=queue.shift();try{await worker(item);}catch(e){}}
+    })());
+  }
+  await Promise.all(runners);
+}
+
+// ── TreeWalker: text node registry ──
+const AUTO_SKIP='.lang-switch,script,style,noscript,#cookieBanner,[data-no-translate]';
+let autoEntries=null;
+function scanNodes(root,list){
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{
+    acceptNode(node){
+      const txt=node.nodeValue;
+      if(!txt||txt.trim().length<2) return NodeFilter.FILTER_REJECT;
+      if(!/[a-zàèéìòùA-ZÀ-Ù]{2}/.test(txt)) return NodeFilter.FILTER_REJECT;
+      if(node.parentElement&&node.parentElement.closest(AUTO_SKIP)) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  let n;
+  while((n=walker.nextNode())){
+    list.push({node:n,original:n.nodeValue,applied:false,done:false});
+  }
+}
+function buildRegistry(){autoEntries=[];scanNodes(document.body,autoEntries);}
+function restoreRegistry(){
+  if(!autoEntries) return;
+  autoEntries.forEach(e=>{if(e.applied&&e.node.isConnected) e.node.nodeValue=e.original;});
+  autoEntries=null;
+}
+async function applyAutoLang(tl,token){
+  if(!autoEntries) return;
+  const byKey=new Map();
+  autoEntries.forEach(e=>{
+    if(e.done) return;
+    if(!e.node.isConnected||e.node.nodeValue!==e.original){e.done=true;return;}
+    const key=e.original.trim();
+    if(!byKey.has(key)) byKey.set(key,[]);
+    byKey.get(key).push(e);
+  });
+  if(!byKey.size) return;
+  // applica dalla cache subito
+  const cache=getCache(tl);
+  Array.from(byKey.keys()).forEach(key=>{
+    if(Object.prototype.hasOwnProperty.call(cache,key)){
+      byKey.get(key).forEach(e=>{
+        if(e.node.isConnected&&e.node.nodeValue===e.original){
+          e.node.nodeValue=cache[key];e.applied=true;e.done=true;
+        }
+      });
+      byKey.delete(key);
+    }
+  });
+  if(!byKey.size) return;
+  // traduce il resto in pool
+  await runPooled(Array.from(byKey.keys()),async key=>{
+    const tr=await translateText(key,tl);
+    if(!tr||token!==langToken) return;
+    byKey.get(key).forEach(e=>{
+      if(e.node.isConnected&&e.node.nodeValue===e.original){
+        e.node.nodeValue=tr;e.applied=true;e.done=true;
+      }
+    });
+  },5);
+}
+
+// ── Cambio lingua ──
+async function setLang(l){
+  if(!SUPPORTED_LANGS.includes(l)) l='it';
+  const prev=lang;
+  const token=++langToken;
+  // ripristina text node tradotti automaticamente
+  restoreRegistry();
+  // ripristina data-i18n al testo italiano
+  if(prev!=='it'){
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const k=el.getAttribute('data-i18n');
+      if(T.it[k]!==undefined) el.innerHTML=T.it[k];
+    });
+  }
   lang=l;
-  document.getElementById('btn-it').classList.toggle('active',l==='it');
-  document.getElementById('btn-en').classList.toggle('active',l==='en');
   document.documentElement.lang=l;
-  document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const k=el.getAttribute('data-i18n');
-    if(T[l][k]!==undefined) el.innerHTML=T[l][k];
+  if(RTL_LANGS.includes(l)){
+    document.documentElement.setAttribute('dir','rtl');
+    document.body.classList.add('rtl-active');
+  }else{
+    document.documentElement.removeAttribute('dir');
+    document.body.classList.remove('rtl-active');
+  }
+  renderLangSwitchers();
+  if(l==='it') return;
+  if(l==='en'){
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const k=el.getAttribute('data-i18n');
+      if(T.en[k]!==undefined) el.innerHTML=T.en[k];
+    });
+    return;
+  }
+  // FR/DE/ES/RU/PT/PL/AR — traduzione automatica su text node
+  buildRegistry();
+  const trigger=document.querySelector('.lang-trigger');
+  if(trigger) trigger.style.opacity='.5';
+  await applyAutoLang(l,token);
+  if(trigger&&token===langToken) trigger.style.opacity='';
+}
+
+// ── Dropdown ──
+function langOptionsHTML(active){
+  return SUPPORTED_LANGS.map(code=>{
+    const m=LANG_META[code];
+    return `<button type="button" class="lang-opt${code===active?' active':''}" onclick="selectLang('${code}')"><span class="lang-opt-flag">${m.flag}</span><span class="lang-opt-name">${m.name}</span></button>`;
+  }).join('');
+}
+function renderLangSwitchers(){
+  document.querySelectorAll('.lang-switch').forEach(sw=>{
+    const trigger=sw.querySelector('.lang-trigger');
+    const panel=sw.querySelector('.lang-panel');
+    if(trigger) trigger.innerHTML=`<span class="lang-trigger-flag">${LANG_META[lang].flag}</span><span class="lang-trigger-code">${lang.toUpperCase()}</span><span class="lang-trigger-caret">▾</span>`;
+    if(panel) panel.innerHTML=langOptionsHTML(lang);
   });
 }
+function closeLangPanels(){
+  document.querySelectorAll('.lang-switch.open').forEach(sw=>{
+    sw.classList.remove('open');
+    const t=sw.querySelector('.lang-trigger');if(t) t.setAttribute('aria-expanded','false');
+  });
+}
+function toggleLangPanel(sw){
+  const isOpen=sw.classList.contains('open');
+  closeLangPanels();
+  if(!isOpen){sw.classList.add('open');const t=sw.querySelector('.lang-trigger');if(t) t.setAttribute('aria-expanded','true');}
+}
+function selectLang(l){setLang(l);closeLangPanels();}
+document.addEventListener('click',e=>{document.querySelectorAll('.lang-switch.open').forEach(sw=>{if(!sw.contains(e.target)) closeLangPanels();});});
+document.addEventListener('keydown',e=>{if(e.key==='Escape') closeLangPanels();});
+renderLangSwitchers();
 
 // Marquee
 const words=['Stoplastica','Mi racconto così','MDS Consulting','MDS Properties','Le Stanze di Roma','Le Stanze di Sharm','Le Stanze di Pescorocchiano','Sereno Vacanze'];
@@ -752,11 +1021,14 @@ function openDetail(id){
   p.classList.add('active');
   p.scrollTop=0;
   window.scrollTo(0,0);
-  // apply current lang to detail
-  document.querySelectorAll('.detail-page [data-i18n]').forEach(el=>{
-    const k=el.getAttribute('data-i18n');
-    if(T[lang][k]!==undefined) el.innerHTML=T[lang][k];
-  });
+  // IT/EN: apply via dictionary. Auto-langs: already translated by TreeWalker.
+  if(lang==='it'||lang==='en'){
+    const src=T[lang];
+    document.querySelectorAll('.detail-page [data-i18n]').forEach(el=>{
+      const k=el.getAttribute('data-i18n');
+      if(src[k]!==undefined) el.innerHTML=src[k];
+    });
+  }
 }
 function closeDetail(){
   document.querySelectorAll('.detail-page').forEach(p=>p.classList.remove('active'));
